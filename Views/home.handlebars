@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/style/meyers_reset copy.css">
+    <link rel="stylesheet" href="/style/master.css">
+    <title>Home</title>
+  </head>
+  <body>
+    <div class="wrapper">
+    <header>
+      <h1>Mystery Word</h1>
+      <h1>You have {{guesses}} guesses left!</h1>
+    </header>
+    <section class="gameContent">
+      <div class="blankWord">
+        {{#word}}
+        <h1 class="letter">{{.}}</h1>
+        {{/word}}
+      </div>
+      <form class="form" action="/submit" method="post">
+        <input class="inputLetter" type="text" name="inputLetter" value="" placeholder="Enter letter here">
+        <button name="button">Make a guess</button>
+      </form>
+      <div class="erros">
+        <ul>
+          {{#errors}}
+          <li>{{msg}}</li>
+          {{/errors}}
+        </ul>
+      </div>
+      <div class="lettersGuessed">
+        <h1>Letters guessed: {{wrong}}</h1>
+      </div>
+    </section>
+  </div>
+  </body>
+</html>
