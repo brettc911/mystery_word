@@ -46,6 +46,7 @@ app.use((req, res, next) => {
 // Home route
 // app.use('/', homeRoute)
 app.get('/', (req, res) => {
+
   const mysteryWord = (req.session.word[0].toUpperCase())
   console.log(mysteryWord)
   res.render('home', {
@@ -94,18 +95,25 @@ app.post('/submit', (req, res) => {
         req.session.guesses --
         req.session.wrongArray.push(inputLetter)
       }
-      req.session.updatedArray === undefined ? newArr = word.checkLetter(inputLetter, mysteryWord, blanks) : newArr = word.checkLetter(inputLetter, mysteryWord, req.session.updatedArray)
-      req.session.updatedArray = newArr
-
-
-
-
-      res.render('home', {
-        word: req.session.updatedArray,
-        guesses: req.session.guesses,
-        wrong: req.session.wrongArray
-      })
-
+      // End Condition
+      if (req.session.guesses === 0) {
+        req.session.destroy();
+        res.render('lose')
+      } else {
+        req.session.updatedArray === undefined ? newArr = word.checkLetter(inputLetter, mysteryWord, blanks) : newArr = word.checkLetter(inputLetter, mysteryWord, req.session.updatedArray)
+        req.session.updatedArray = newArr
+        if (newArr.join("") == mysteryWord) {
+          console.log('you won');
+          req.session.destroy()
+          res.render('win')
+        } else {
+          res.render('home', {
+            word: req.session.updatedArray,
+            guesses: req.session.guesses,
+            wrong: req.session.wrongArray
+          })
+        }
+      }
     }
   });
 
