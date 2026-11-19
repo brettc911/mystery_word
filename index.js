@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 const wordsArray = require('./modules/words.js')
 const word = require('./modules/word.js')
 const app = express()
+const game = express.Router()
 
 // Route names
 const homeRoute = require('./routes/home');
@@ -16,24 +17,25 @@ app.engine('handlebars', exphbs())
 app.set('views', path.join(__dirname, 'Views'))
 app.set('view engine', 'handlebars')
 // Configure statc files/ directory
-app.use(express.static(path.join(__dirname, 'public')))
+game.use(express.static(path.join(__dirname, 'public')))
 // Configure parser
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({
+game.use(bodyParser.json())
+game.use(bodyParser.urlencoded({
   extended: false
 }))
 // Validate information
-app.use(expressValidator())
+game.use(expressValidator())
 
 // Session Middleware
-app.use(session({
+game.use(session({
   secret: 'farts',
   resave: false,
   saveUninitialized: true
 }))
 
 // Sessions
-app.use((req, res, next) => {
+game.use((req, res, next) => {
+  res.locals.basePath = req.baseUrl
   if (!req.session.word) {
     req.session.word = [wordsArray[Math.floor(Math.random() * wordsArray.length)]]
     req.session.updatedArray = undefined
@@ -46,7 +48,7 @@ app.use((req, res, next) => {
 
 // Home route
 // app.use('/', homeRoute)
-app.get('/', (req, res) => {
+game.get('/', (req, res) => {
 
   const mysteryWord = (req.session.word[0].toUpperCase())
   console.log(mysteryWord)
@@ -59,7 +61,7 @@ app.get('/', (req, res) => {
 
 
 
-app.post('/submit', (req, res) => {
+game.post('/submit', (req, res) => {
   // Make input letter uppercase
   req.body.inputLetter = req.body.inputLetter.toUpperCase()
   // Validation check on input letter
@@ -122,6 +124,12 @@ app.post('/submit', (req, res) => {
 
 
 })
+
+// The load balancer preserves the application's path prefix.
+const basePath = (process.env.BASE_PATH || '/game').replace(/\/+$/, '')
+if (basePath) app.use(basePath, game)
+// Keep the root available for local use and container health checks.
+app.use('/', game)
 
 // Port config
 if (require.main === module) {

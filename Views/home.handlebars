@@ -2,8 +2,8 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/style/meyers_reset copy.css">
-    <link rel="stylesheet" href="/style/master.css">
+    <link rel="stylesheet" href="{{basePath}}/style/meyers_reset copy.css">
+    <link rel="stylesheet" href="{{basePath}}/style/master.css">
     <title>Home</title>
   </head>
   <body>
@@ -18,7 +18,7 @@
         <h1 class="letter">{{.}}</h1>
         {{/word}}
       </div>
-      <form class="form" action="/submit" method="post">
+      <form class="form" action="{{basePath}}/submit" method="post">
         <input class="inputLetter" type="text" name="inputLetter" value="" placeholder="Enter letter here">
         <button name="button">Make a guess</button>
       </form>
