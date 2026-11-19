@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const exphbs = require('express-handlebars')
 const expressValidator = require('express-validator')
 const session = require('express-session')
@@ -12,10 +13,10 @@ const homeRoute = require('./routes/home');
 
 // Configure view
 app.engine('handlebars', exphbs())
-app.set('views', './views')
+app.set('views', path.join(__dirname, 'Views'))
 app.set('view engine', 'handlebars')
 // Configure statc files/ directory
-app.use(express.static('public'))
+app.use(express.static(path.join(__dirname, 'public')))
 // Configure parser
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -123,6 +124,11 @@ app.post('/submit', (req, res) => {
 })
 
 // Port config
-app.listen(3000, function() {
-  console.log("listening on port 3000...")
-})
+if (require.main === module) {
+  const port = process.env.PORT || 3000
+  app.listen(port, function() {
+    console.log(`listening on port ${port}...`)
+  })
+}
+
+module.exports = app
